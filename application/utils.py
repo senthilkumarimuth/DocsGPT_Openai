@@ -24,8 +24,6 @@ COMPLETIONS_API_PARAMS = {
 }
 
 
-
-
 def get_embedding(text: str, model: str = EMBEDDING_MODEL) -> list[float]:
     result = openai.Embedding.create(
         model=model,
@@ -57,7 +55,7 @@ def order_document_sections_by_query_similarity(query: str, contexts: dict[(str,
 
     return document_similarities
 
-def construct_prompt(question: str, context_embeddings: dict, df: pd.DataFrame) -> str:
+def construct_prompt(question: str, context_embeddings: dict, df: pd.DataFrame, template: str) -> str:
     """
     Fetch relevant
     """
@@ -75,30 +73,30 @@ def construct_prompt(question: str, context_embeddings: dict, df: pd.DataFrame) 
         if chosen_sections_len > MAX_SECTION_LEN:
             break
 
-        chosen_sections.append(SEPARATOR + document_section.content.replace("\n", " "))
+        #chosen_sections.append(SEPARATOR + document_section.content.replace("\n", " "))
+        chosen_sections.append(document_section.content.replace("\n", " "))
         chosen_sections_indexes.append(str(section_index))
 
-    # Useful diagnostic information
-    print(f"Selected {len(chosen_sections)} document sections:")
-    print("\n".join(chosen_sections_indexes))
-
-    header = """You are TVS QA BOT. You are capable of answering questions reqarding TVS Owner Manual. Answer the question as truthfully as possible using the provided context, and if the answer is not contained within the text below, say "I don't know."\n\nContext:\n"""
-
-    return header + "".join(chosen_sections) + "\n\n Q: " + question + "\n A:"
+    #header = """You are TVS QA BOT. You are capable of answering questions reqarding TVS Owner Manual. Answer the question as truthfully as possible using the provided context, and if the answer is not contained within the text below, say "I don't know."\n\nContext:\n"""
+    _prompt = template + "\nQUESTION: " + question +"\nContext: " + "".join(chosen_sections) + "\nSource: " + ",".join(chosen_sections_indexes)+  "\nFINAL ANSWER:"
+    return _prompt
 
 
 def answer_query_with_context(
         query: str,
         df: pd.DataFrame,
         document_embeddings: dict[(str, str), np.array],
+        template: str,
         show_prompt: bool = False) -> str:
     prompt = construct_prompt(
             query,
             document_embeddings,
-            df
+            df,
+            template
         )
 
     if show_prompt:
+
         print(prompt)
 
     response = openai.Completion.create(

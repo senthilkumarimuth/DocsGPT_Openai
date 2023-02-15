@@ -29,38 +29,26 @@ def home():
 @app.route("/api/answer", methods=["POST"])
 def api_answer():
     data = request.get_json()
-    print(data)
     question = data["question"]
-    api_key = data["api_key"]
     # check if the vectorstore is set\
-    print(data)
     if data['active_docs'] !='Choose documentation':
         vectorstore = "vectorstores/" + data["active_docs"]
 
     else:
         vectorstore = ""
     #print(vectorstore)
-
     with open(os.path.join(vectorstore,"df.pkl"), "rb") as f:
         df = pickle.load(f)
-
     with open(os.path.join(vectorstore,"document_embeddings.pkl"), "rb") as f:
         document_embeddings = pickle.load(f)
-
     # loading the index and the store and the prompt template
 
-    answer = answer_query_with_context(question, df, document_embeddings)
+    answer = answer_query_with_context(question, df, document_embeddings, template, show_prompt=True)
     result = {}
     result['answer'] = answer
     # some formatting for the frontend
     result['answer'] = result['answer'].replace("\\n", "<br>")
-    #result['answer'] = result['answer'].replace("SOURCES:", "")
-    # mock result
-    # result = {
-    #     "answer": "The answer is 42",
-    #     "sources": ["https://en.wikipedia.org/wiki/42_(number)", "https://en.wikipedia.org/wiki/42_(number)"]
-    # }
-    # print('Answer: ', result['answer'])
+    # result['answer'] = result['answer'].replace("SOURCES:", "")
     return result
 
 
