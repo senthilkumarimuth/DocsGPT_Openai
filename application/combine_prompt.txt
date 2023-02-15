@@ -5,14 +5,72 @@ If the answer does not exist in the documents, say "I don't know".
 ALWAYS return a "SOURCES" part in your answer.
 
 QUESTION: What is this document?
-Context: Our warmest welcome to you to the developers’ portal for PDP!
+=========
+Content: Our warmest welcome 
+to you to the developers’ portal for PDP!
+
 Source: Intro to PDP
+
+Content: Intro to PDP
+Source: Intro to PDP
+=========
 FINAL ANSWER: This document is a developers' portal for PDP. It has the Intro to PDP.
-SOURCES: Intro to PDP
-=========
+SOURCES: Intro to PDP Intro to PDP
+
 QUESTION: How to eat vegetables using PDP?
-Context: ExtensionArray.repeat(repeats, axis=None) Returns a new ExtensionArray where each element of the current ExtensionArray is repeated consecutively a given number of times. \n\nParameters: repeats int or array of ints. The number of repetitions for each element. This should be a positive integer. Repeating 0 times will return an empty array. axis (0 or ‘index’, 1 or ‘columns’), default 0 The axis along which to repeat values. Currently only axis=0 is supported.
-Source: 0-pl
-FINAL ANSWER: I don't know. This is not part of PDP document.
-SOURCES: None
 =========
+Content: ExtensionArray.repeat(repeats, axis=None) Returns a new ExtensionArray where each element of the current ExtensionArray is repeated consecutively a given number of times. \n\nParameters: repeats int or array of ints. The number of repetitions for each element. This should be a positive integer. Repeating 0 times will return an empty array. axis (0 or ‘index’, 1 or ‘columns’), default 0 The axis along which to repeat values. Currently only axis=0 is supported.
+Source: 0-pl
+=========
+FINAL ANSWER: You can't eat vegetables using PDP. You can only eat them using your mouth.
+SOURCES: None
+
+QUESTION: Who should I contact for product features?
+=========
+Content: Product features, wishlists, clarifications: /n Product boy /n Product.boy@oem.com
+
+Source: SUPPORT
+=========
+FINAL ANSWER: You can contact Product boy. Their email address is Product.boy@oem.com
+SOURCES: SUPPORT
+
+QUESTION: What is the difference between PDP and other devices?
+=========
+Content: On PDP, you can onboard 20+ after market devices readily, out-of-the-box. It’s device agnostic. PDP lets you have one view for your multiple vehicles, how many ever wheels too! It is product agnostic. You can even choose to have your own protocol / payload structure and your device can be onboarded onto the platform. It’s protocol agnostic. And that’s why we say, its generic yet specific, how you see it.
+
+
+Source: How PDP differs from After-market devices?
+=========
+FINAL ANSWER: PDP is agnostic to device, product and protocol. It is generic yet specific. Unlike on other devices, PDP can onboard multiple vehicles and devices for the same person.
+SOURCES: How PDP differs from After-market devices?
+
+QUESTION: What APIs are there on PDP?
+=========
+Content: These are the QUERY APIs. These are the MUTATION APIs. These are the SUBSCRIPTION APIs.
+
+
+Source: API index by type
+=========
+FINAL ANSWER: There are three major types of APIs on PDP. There are QUERY, MUTATION and SUBSCRIPTION APIs.
+SOURCES: API index by type
+
+QUESTION: What APIs are there on PDP?
+=========
+Content: These are the QUERY APIs. These are the MUTATION APIs. These are the SUBSCRIPTION APIs.
+
+
+Source: API index by type
+=========
+FINAL ANSWER: There are three major types of APIs on PDP. There are QUERY, MUTATION and SUBSCRIPTION APIs.
+SOURCES: API index by type
+
+QUESTION: When did India get independence?
+=========
+Content: ExtensionArray.repeat(repeats, axis=None) Returns a new ExtensionArray where each element of the current ExtensionArray is repeated consecutively a given number of times. \n\nParameters: repeats int or array of ints. The number of repetitions for each element. This should be a positive integer. Repeating 0 times will return an empty array. axis (0 or ‘index’, 1 or ‘columns’), default 0 The axis along which to repeat values. Currently only axis=0 is supported.
+
+
+Source: 
+=========
+FINAL ANSWER: This is a factual question and not covered in the document. I don't know.
+SOURCES: 
+
