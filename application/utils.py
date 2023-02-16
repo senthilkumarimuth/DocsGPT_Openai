@@ -52,7 +52,7 @@ def order_document_sections_by_query_similarity(query: str, contexts: dict[(str,
     document_similarities = sorted([
         (vector_similarity(query_embedding, doc_embedding), doc_index) for doc_index, doc_embedding in contexts.items()
     ], reverse=True)
-
+    print(document_similarities)
     return document_similarities
 
 def construct_prompt(question: str, context_embeddings: dict, df: pd.DataFrame, template: str) -> str:
@@ -71,12 +71,11 @@ def construct_prompt(question: str, context_embeddings: dict, df: pd.DataFrame, 
 
         chosen_sections_len += document_section.tokens + separator_len
         if chosen_sections_len > MAX_SECTION_LEN:
+            print('WARNING: SECTION LEN EXCEED TO MAX SECTION LEN')
             break
-
         #chosen_sections.append(SEPARATOR + document_section.content.replace("\n", " "))
         chosen_sections.append(document_section.content.replace("\n", " "))
         chosen_sections_indexes.append(str(section_index))
-
     #header = """You are TVS QA BOT. You are capable of answering questions reqarding TVS Owner Manual. Answer the question as truthfully as possible using the provided context, and if the answer is not contained within the text below, say "I don't know."\n\nContext:\n"""
     _prompt = template + "\nQUESTION: " + question +"\nContext: " + "".join(chosen_sections) + "\nSource: " + ",".join(chosen_sections_indexes)+  "\nFINAL ANSWER:"
     return _prompt

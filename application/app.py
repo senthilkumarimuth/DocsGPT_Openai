@@ -39,6 +39,7 @@ def api_answer():
     # loading the index and the store and the prompt template
     answer = answer_query_with_context(question, df, document_embeddings, template, show_prompt=True)
     result = {'answer': answer}
+    print(answer)
     # some formatting for the frontend
     temp = result['answer'].split('SOURCES:')
     result['answer'] = result['answer'].replace("\\n", "<br>")

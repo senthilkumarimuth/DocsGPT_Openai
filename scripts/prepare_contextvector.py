@@ -6,7 +6,8 @@ import dotenv,os
 from transformers import GPT2TokenizerFast
 import pickle
 from pathlib import Path, PurePath
-
+import time
+import logging
 
 # set api key
 env = dotenv.load_dotenv()
@@ -20,35 +21,29 @@ document_name = str(input('Enter the PDF document name for which vector to be cr
 pdfFileObj = open('PDP document for QA bot_v1.pdf', 'rb')
 pdfReader = PyPDF2.PdfReader(pdfFileObj)
 num_pages = len(pdfReader.pages)
-print(pdfReader.pages)
 data = []
 for page in range(0, num_pages):
-    print('print', page)
     pageObj = pdfReader.pages[page]
     page_text = pageObj.extract_text()
     data.append(page_text)
 pdfFileObj.close()
-data = data[0:15]  # Number of page for which vector is created
 
+# Split small chucks to so that LLMs can perform well
 text_splitter = CharacterTextSplitter(chunk_size=1500, separator="\n")
 docs = []
 metadatas = []
+sources = None
 for i, d in enumerate(data):
     splits = text_splitter.split_text(d)
-    #print(i, len(splits))
     docs.extend(splits)
-    #metadatas.extend([{"source": sources[i]}] * len(splits))
-
-metadatas = [{"source":"PDP DOCUMENTATION INDEX"}, {"source":"SUPPORT"},{"source":"API INDEX BY TYPE"},
-    {"source":"INTRO TO PDP"},{"source":"How PDP differs from After-market devices?"},
-    {"source":"PDP’s APIs RePEAT"}, {"source":"Quick brief about GraphQL"},{"source":"GraphQL Methods"},
-    {"source":"Modules"}]
+    metadatas.extend([{"source": i}] * len(splits))
 
 df = pd.DataFrame(metadatas)
 df.insert(1, 'content', docs)
-df = df.set_index(["source"])
-print(f"{len(df)} rows in the data.")
-#df.sample(5)
+df.insert(1,'raw_index', df.index)
+df = df.set_index(['raw_index',"source"])
+logging.info('Number of rows in the document after chunk splits: '.format(str(len(df))))
+
 
 # Tokenize
 
@@ -59,6 +54,7 @@ def count_tokens(text: str) -> int:
 tokenizer = GPT2TokenizerFast.from_pretrained("gpt2") ##Todo: Use the logic provided by openai
 
 content_token = [ count_tokens(text) for text in df.content.tolist()]
+logging.warning(f'Total number of tokens in document: {(str(sum(content_token)))}')
 df.insert(1, 'tokens', content_token)
 
 
@@ -78,9 +74,16 @@ def compute_doc_embeddings(df: pd.DataFrame) -> dict[tuple[str, str], list[float
 
     Return a dictionary that maps between each embedding vector and the index of the row that it corresponds to.
     """
-    return {
-        idx: get_embedding(r.content) for idx, r in df.iterrows()
-    }
+    counter = 0
+    embed_dict = {}
+    for idx, r in df.iterrows():
+        embed_dict[idx] = get_embedding(r.content)
+        counter = counter + 1
+        if counter == 25:
+            counter = 0
+            print('waiting for 60 seconds')
+            time.sleep(61) # Workaround for rate limit for a min
+    return embed_dict
 
 # compute embedding for the document
 document_embeddings = compute_doc_embeddings(df)
@@ -93,8 +96,10 @@ os.makedirs(vector_path, exist_ok=True)
 # write docs.index and pkl file
 
 df.to_pickle(os.path.join(vector_path,'df.pkl'))
+df.to_csv(os.path.join(vector_path,'df.csv'))
+
 
 with open(os.path.join(vector_path,"document_embeddings.pkl"), "wb") as f:
      pickle.dump(document_embeddings, f)
 
-# Todo: File doesn't terminate once the code run
+logging.info('Vectorization is successful')
