@@ -7,7 +7,11 @@ from transformers import GPT2TokenizerFast
 import pickle
 from pathlib import Path, PurePath
 import time
-import logging
+
+import sys
+from pathlib import Path, PurePath
+sys.path.append(PurePath(Path(__file__).parents[2]).as_posix())
+from utils.logging.custom_logging import logger
 
 # set api key
 env = dotenv.load_dotenv()
@@ -42,7 +46,7 @@ df = pd.DataFrame(metadatas)
 df.insert(1, 'content', docs)
 df.insert(1,'raw_index', df.index)
 df = df.set_index(['raw_index',"source"])
-logging.info('Number of rows in the document after chunk splits: '.format(str(len(df))))
+logger.info(f'Number of rows in the document after chunk splits: {str(len(df))}')
 
 
 # Tokenize
@@ -54,7 +58,7 @@ def count_tokens(text: str) -> int:
 tokenizer = GPT2TokenizerFast.from_pretrained("gpt2") ##Todo: Use the logic provided by openai
 
 content_token = [ count_tokens(text) for text in df.content.tolist()]
-logging.warning(f'Total number of tokens in document: {(str(sum(content_token)))}')
+logger.info(f'Total number of tokens in document: {(str(sum(content_token)))}')
 df.insert(1, 'tokens', content_token)
 
 
@@ -102,4 +106,4 @@ df.to_csv(os.path.join(vector_path,'df.csv'))
 with open(os.path.join(vector_path,"document_embeddings.pkl"), "wb") as f:
      pickle.dump(document_embeddings, f)
 
-logging.info('Vectorization is successful')
+logger.info('Vectorization is successful')
