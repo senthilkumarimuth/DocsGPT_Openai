@@ -10,7 +10,7 @@ import time
 
 import sys
 from pathlib import Path, PurePath
-sys.path.append(PurePath(Path(__file__).parents[2]).as_posix())
+sys.path.append(PurePath(Path(__file__).parents[1]).as_posix())
 from utils.logging.custom_logging import logger
 
 # set api key
@@ -22,7 +22,7 @@ document_name = str(input('Enter the PDF document name for which vector to be cr
 
 # pdf to text
 
-pdfFileObj = open('PDP document for QA bot_v1.pdf', 'rb')
+pdfFileObj = open('TVS Jupiter 125 - SMW.pdf', 'rb')
 pdfReader = PyPDF2.PdfReader(pdfFileObj)
 num_pages = len(pdfReader.pages)
 data = []
@@ -31,6 +31,7 @@ for page in range(0, num_pages):
     page_text = pageObj.extract_text()
     data.append(page_text)
 pdfFileObj.close()
+logger.info(f'Number of pages in the document is: {len(data)}')
 
 # Split small chucks to so that LLMs can perform well
 text_splitter = CharacterTextSplitter(chunk_size=1500, separator="\n")
@@ -78,6 +79,7 @@ def compute_doc_embeddings(df: pd.DataFrame) -> dict[tuple[str, str], list[float
 
     Return a dictionary that maps between each embedding vector and the index of the row that it corresponds to.
     """
+    logger.info(f'Embedding process is started')
     counter = 0
     embed_dict = {}
     for idx, r in df.iterrows():
@@ -85,8 +87,9 @@ def compute_doc_embeddings(df: pd.DataFrame) -> dict[tuple[str, str], list[float
         counter = counter + 1
         if counter == 25:
             counter = 0
-            print('waiting for 60 seconds')
+            logger.info('waiting for 60 seconds')
             time.sleep(61) # Workaround for rate limit for a min
+    logger.info(f'Embedding process is completed')
     return embed_dict
 
 # compute embedding for the document

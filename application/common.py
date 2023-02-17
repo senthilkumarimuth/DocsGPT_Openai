@@ -2,6 +2,10 @@ import openai
 import numpy as np
 import tiktoken
 import pandas as pd
+import sys
+from pathlib import Path, PurePath
+sys.path.append(PurePath(Path(__file__).parents[1]).as_posix())
+from utils.logging.custom_logging import logger
 
 COMPLETIONS_MODEL = "text-davinci-003"   ##Todo: Babbage/Curie models may be more suitable. Need to test this
 EMBEDDING_MODEL = "text-embedding-ada-002"
@@ -52,7 +56,6 @@ def order_document_sections_by_query_similarity(query: str, contexts: dict[(str,
     document_similarities = sorted([
         (vector_similarity(query_embedding, doc_embedding), doc_index) for doc_index, doc_embedding in contexts.items()
     ], reverse=True)
-    print(document_similarities)
     return document_similarities
 
 def construct_prompt(question: str, context_embeddings: dict, df: pd.DataFrame, template: str) -> str:
@@ -71,7 +74,7 @@ def construct_prompt(question: str, context_embeddings: dict, df: pd.DataFrame, 
 
         chosen_sections_len += document_section.tokens + separator_len
         if chosen_sections_len > MAX_SECTION_LEN:
-            print('WARNING: SECTION LEN EXCEED TO MAX SECTION LEN')
+            logger.warning(f'SECTION LEN EXCEED TO MAX SECTION LEN({MAX_SECTION_LEN})')
             break
         #chosen_sections.append(SEPARATOR + document_section.content.replace("\n", " "))
         chosen_sections.append(document_section.content.replace("\n", " "))
