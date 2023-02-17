@@ -18,7 +18,7 @@ env = dotenv.load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # enter the document name for which vector to be created
-document_name = str(input('Enter the PDF document name for which vector to be created(keep it short): '))
+document_name = str(input('Enter PDF document name for which vector to be created(keep it short ex: pdp): '))
 
 # pdf to text
 
@@ -82,13 +82,15 @@ def compute_doc_embeddings(df: pd.DataFrame) -> dict[tuple[str, str], list[float
     logger.info(f'Embedding process is started')
     counter = 0
     embed_dict = {}
+    page_count = 20 # For free-trail users, 20 requests per min are allowed
     for idx, r in df.iterrows():
         embed_dict[idx] = get_embedding(r.content)
         counter = counter + 1
-        if counter == 25:
+        time.sleep(2)
+        if counter == page_count:
             counter = 0
-            logger.info('waiting for 60 seconds')
-            time.sleep(61) # Workaround for rate limit for a min
+            logger.info(f'Embedding vector for {page_count} pages created.Waiting for 60 seconds before continuing')
+            time.sleep(60) # Workaround for rate limit for a min
     logger.info(f'Embedding process is completed')
     return embed_dict
 

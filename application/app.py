@@ -35,12 +35,16 @@ def api_answer():
         vector_store = "vectorstores/" + data["active_docs"]
     else:
         vector_store = ""
+    logger.debug(f'vectorstore path: {vector_store}')
     # load pkl from vector store
     with open(os.path.join(vector_store,"df.pkl"), "rb") as f:
         df = pickle.load(f)
     with open(os.path.join(vector_store,"document_embeddings.pkl"), "rb") as f:
         document_embeddings = pickle.load(f)
-    with open(os.path.join(vector_store,"combine_prompt.txt"), "r") as f:
+    # loading prompt
+    prompt_path = os.path.join("prompts",data["active_docs"])
+    logger.debug(f'prompt path: {prompt_path}')
+    with open(os.path.join(prompt_path,"combine_prompt.txt"), "r") as f:
          template = f.read()
 
     # loading the index and the store and the prompt template
@@ -60,6 +64,7 @@ def api_answer():
             result['answer'] = temp[0]
 
     #result['answer'] = result['answer'].replace("SOURCES:", "")
+    logger.info(f'Answer: {result["answer"]}')
     return result
 
 

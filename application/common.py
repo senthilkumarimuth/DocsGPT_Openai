@@ -78,7 +78,9 @@ def construct_prompt(question: str, context_embeddings: dict, df: pd.DataFrame, 
             break
         #chosen_sections.append(SEPARATOR + document_section.content.replace("\n", " "))
         logger.info(f'Context Proability is: {_}')
-        chosen_sections.append(document_section.content.replace("\n", " "))
+        section = document_section.content.replace("\n", " ")
+        logger.debug(f'Contex: {section}')
+        chosen_sections.append(section)
         chosen_sections_indexes.append(str(section_index))
     #header = """You are TVS QA BOT. You are capable of answering questions reqarding TVS Owner Manual. Answer the question as truthfully as possible using the provided context, and if the answer is not contained within the text below, say "I don't know."\n\nContext:\n"""
     _prompt = template + "\nQUESTION: " + question +"\nContext: " + "".join(chosen_sections) + "\nSource: " + ",".join(chosen_sections_indexes)+  "\nFINAL ANSWER:"
