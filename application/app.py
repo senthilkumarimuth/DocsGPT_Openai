@@ -49,8 +49,16 @@ def api_answer():
     # some formatting for the frontend
     temp = result['answer'].split('SOURCES:')
     result['answer'] = result['answer'].replace("\\n", "<br>")
-    result['answer'] = temp[0]
-    logger.debug(f'Sources/Page from which the answer is derived: {str(temp[1])}')
+    if temp[1] != ' None':
+        result['answer'] = temp[0]
+        logger.debug(f'Sources/Page from which the answer is derived: {str(temp[1])}')
+    else:
+        if temp[0] != "I don't know.\n":
+            result['answer'] = temp[0] + "\n" + "Source: Answer is not from this document"
+            logger.debug(f'Sources/Page from which the answer is derived: Answer is not from this document')
+        else:
+            result['answer'] = temp[0]
+
     #result['answer'] = result['answer'].replace("SOURCES:", "")
     return result
 
