@@ -24,13 +24,13 @@ Go to scripts folder and run the script prepare_contextvector.py
 python prepare_contextvector.py
 Enter the document’s name for which you need context vector as in the example below
 
-![Alt text](./readme_fiels/b3a8d398-f17d-419e-a607-eccb6f3dfcd3.png?raw=true "enter document name")
+![Alt text](/readme_fiels/b3a8d398-f17d-419e-a607-eccb6f3dfcd3.png?raw=true "enter document name")
 
 Note: here the document name is pdp.
 
 Once run is complete, you will see pkl files generated at the directory 'vectorstore' as in the example below.
 
-![Alt text](./readme_fiels/vecterstore.png?raw=true "vector store")
+![Alt text](/readme_fiels/vecterstore.png?raw=true "vector store")
 
 If you have reached this stage, you are successful at creating context vector for you document.
 
