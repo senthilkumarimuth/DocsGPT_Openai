@@ -42,7 +42,7 @@ Now visit to http://127.0.0.1:5000/
 
 Choose the document to which you would like to chat.
 
-![Alt text](./readme_files/206d5169-f176-4005-a23a-fa1616db744f.png?raw=true "web ui")
+![Alt text](./readme_files/webui.png?raw=true "web ui")
 
 Now you are all setup to chat with the document!
 
