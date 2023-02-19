@@ -26,7 +26,7 @@ Note: here the document name is pdp.
 
 Once run is complete, you will see pkl files generated at the directory 'vectorstore' as in the example below.
 
-![plot](./readme_files/vecterstore.PNG)
+![Alt text](./readme_files/vecterstore.PNG?raw=true "vectorstore")
 
 If you have reached this stage, you are successful at creating context vector for you document.
 
