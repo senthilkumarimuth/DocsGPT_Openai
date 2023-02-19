@@ -26,7 +26,7 @@ Note: here the document name is pdp.
 
 Once run is complete, you will see pkl files generated at the directory 'vectorstore' as in the example below.
 
-![vectorStoret](./readme_fiels/vecterstore.PNG)
+![plot](./readme_fiels/vecterstore.PNG)
 
 <p align="center">
   <img src="./readme_fiels/vecterstore.PNG" width="350" title="vectorstore">
