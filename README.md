@@ -32,7 +32,7 @@ If you have reached this stage, you are successful at creating context vector fo
 
 Next prepare prompts and keep in respective folder as shown below.
 
-![Alt text](./readme_files/56c8dba5-452b-45b9-a9df-6ab5f4e8af3a.png?raw=true "prompt")
+![Alt text](./readme_files/prompt.PNG?raw=true "prompt")
 
 Now you are all setup to run the Flask application.
 
