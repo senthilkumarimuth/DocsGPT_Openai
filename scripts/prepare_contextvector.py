@@ -63,7 +63,6 @@ logger.info(f'Total number of tokens in document: {(str(sum(content_token)))}')
 df.insert(1, 'tokens', content_token)
 
 
-COMPLETIONS_MODEL = "text-davinci-003"   ##Todo: Babbage/Curie models may be more suitable. Need to test this
 EMBEDDING_MODEL = "text-embedding-ada-002"
 
 def get_embedding(text: str, model: str = EMBEDDING_MODEL) -> list[float]:

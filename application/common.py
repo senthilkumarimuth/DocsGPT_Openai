@@ -7,7 +7,7 @@ from pathlib import Path, PurePath
 sys.path.append(PurePath(Path(__file__).parents[1]).as_posix())
 from utils.logging.custom_logging import logger
 
-COMPLETIONS_MODEL = "text-davinci-003"   ##Todo: Babbage/Curie models may be more suitable. Need to test this
+COMPLETIONS_MODEL = "text-davinci-003"
 EMBEDDING_MODEL = "text-embedding-ada-002"
 
 
@@ -78,7 +78,7 @@ def construct_prompt(question: str, context_embeddings: dict, df: pd.DataFrame, 
             break
         #chosen_sections.append(SEPARATOR + document_section.content.replace("\n", " "))
         logger.info(f'Context Proability is: {_}')
-        section = document_section.content.replace("\n", " ")
+        section = SEPARATOR + document_section.content.replace("\n", " ")
         logger.debug(f'Contex: {section}')
         chosen_sections.append(section)
         chosen_sections_indexes.append(str(section_index))
