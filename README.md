@@ -32,6 +32,11 @@ Once run is complete, you will see pkl files generated at the directory 'vectors
 
 ![vectorStoret](./readme_fiels/vecterstore.png)
 
+<p align="center">
+  <img src="./readme_fiels/vecterstore.png" width="350" title="vectorstore">
+</p>
+
+
 If you have reached this stage, you are successful at creating context vector for you document.
 
 Next prepare prompts and keep in respective folder as shown below.
