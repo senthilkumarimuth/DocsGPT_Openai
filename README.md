@@ -8,20 +8,16 @@ This application is for getting answer based on document, similar to question-an
 
 Git clone the application in your local. Run the below command in command prompt.
 
-
-git clone https://github/senthilkumarimuth/DocsGPT_Openai.git
+`git clone https://github/senthilkumarimuth/DocsGPT_Openai.git`
  
-
 Install dependencies. cd to application folder and run the below command
 
-
-pip install -r requirements.text
+`pip install -r requirements.text`
  
-
 Go to scripts folder and run the script prepare_contextvector.py
 
+`python prepare_contextvector.py`
 
-python prepare_contextvector.py
 Enter the document’s name for which you need context vector as in the example below
 
 ![Alt text](/readme_fiels/b3a8d398-f17d-419e-a607-eccb6f3dfcd3.png?raw=true "enter document name")
