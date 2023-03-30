@@ -14,7 +14,13 @@ from utils.logging.custom_logging import logger
 dotenv.load_dotenv()
 
 # load prompt template
+from langchain.memory import ConversationBufferWindowMemory
 
+memory = ConversationBufferWindowMemory(k=2)
+memory.ai_prefix = 'FINAL ANSWER'
+memory.human_prefix = 'QUESTION'
+memory.save_context({"input": "hi"}, {"ouput": "hello how are you.\nSOURCES: "})
+memory.save_context({"input": "good how are you"}, {"ouput": "i am doing great.\nSOURCES: "})
 
 logger.debug('Starting Flask APP')
 app = Flask(__name__)
@@ -48,25 +54,28 @@ def api_answer():
          template = f.read()
 
     # loading the index and the store and the prompt template
-    answer = answer_query_with_context_llm(question, df, document_embeddings, template, show_prompt=False)
-    # result = {'answer': answer}
-    # # some formatting for the frontend
-    # temp = result['answer'].split('SOURCES:')
-    # result['answer'] = result['answer'].replace("\\n", "<br>")
-    # if temp[1] != ' None':
-    #     result['answer'] = temp[0]
-    #     logger.debug(f'Sources/Page from which the answer is derived: {str(temp[1])}')
-    # else:
-    #     if temp[0] != "I don't know.\n":
-    #         result['answer'] = temp[0] + "\n" + "Source: Answer is not from this document"
-    #         logger.debug(f'Sources/Page from which the answer is derived: Answer is not from this document')
-    #     else:
-    #         result['answer'] = temp[0]
-    #
-    # #result['answer'] = result['answer'].replace("SOURCES:", "")
-    # logger.info(f'Answer: {result["answer"]}')
-    # return result
-    return answer
+
+    answer = answer_query_with_context_llm(question, df, document_embeddings, template, memory, show_prompt=False)
+    result = {'answer': answer}
+    #some formatting for the frontend
+    temp = result['answer'].split('SOURCES:')
+    result['answer'] = result['answer'].replace("\\n", "<br>")
+    SOURCE = ""
+    if temp[1] != ' None':
+        result['answer'] = temp[0]
+        SOURCE = temp[1]
+        logger.debug(f'Sources/Page from which the answer is derived: {str(temp[1])}')
+    else:
+        if temp[0] != "I don't know.\n":
+            result['answer'] = temp[0] + "\n" + "Source: Answer is not from this document"
+            logger.debug(f'Sources/Page from which the answer is derived: Answer is not from this document')
+        else:
+            result['answer'] = temp[0]
+
+    #result['answer'] = result['answer'].replace("SOURCES:", "")
+    logger.info(f'Answer: {result["answer"]}')
+    memory.save_context({"input": question}, {"ouput": result["answer"] +"SOURCES: "+SOURCE})
+    return result
 
 
 # handling CORS

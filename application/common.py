@@ -5,7 +5,6 @@ import pandas as pd
 import sys
 
 from langchain.llms import OpenAI
-from langchain.memory import ConversationBufferWindowMemory
 from langchain.chains import ConversationChain
 
 
@@ -65,7 +64,7 @@ def order_document_sections_by_query_similarity(query: str, contexts: dict[(str,
     ], reverse=True)
     return document_similarities
 
-def construct_prompt(question: str, context_embeddings: dict, df: pd.DataFrame, template: str) -> str:
+def construct_prompt(question: str, context_embeddings: dict, df: pd.DataFrame, template: str, memory) -> str:
     """
     Fetch relevant
     """
@@ -90,7 +89,8 @@ def construct_prompt(question: str, context_embeddings: dict, df: pd.DataFrame, 
         chosen_sections.append(section)
         chosen_sections_indexes.append(str(section_index))
     #header = """You are TVS QA BOT. You are capable of answering questions reqarding TVS Owner Manual. Answer the question as truthfully as possible using the provided context, and if the answer is not contained within the text below, say "I don't know."\n\nContext:\n"""
-    _prompt = template + "\nQUESTION: " + question +"\nContext: " + "".join(chosen_sections) + "\nSource: " + ",".join(chosen_sections_indexes)+  "\nFINAL ANSWER:"
+    _prompt = template+memory.load_memory_variables({})['history'] + "\nQUESTION: " + question +"\nContext: " + "".join(chosen_sections) + \
+              "\nSource: " + ",".join(chosen_sections_indexes)+  "\nFINAL ANSWER:"
     return _prompt
 
 
@@ -134,7 +134,8 @@ def answer_query_with_context_llm(
         df: pd.DataFrame,
         document_embeddings: dict[(str, str), np.array],
         template: str,
-        show_prompt: bool = False) -> str:
+        memory,
+        show_prompt: bool = False,) -> str:
     """
     Facade function to get question from user and call model, eventually returns the answer to user
 
@@ -149,22 +150,18 @@ def answer_query_with_context_llm(
             query,
             document_embeddings,
             df,
-            template
+            template,
+            memory
         )
 
+    #prompt = prompt + "\n" + memory.load_memory_variables({})['history']
+    print(prompt)
     if show_prompt:
 
         print(prompt)
-    conversation_with_summary = ConversationChain(
-        llm=OpenAI(temperature=0),
-        # We set a low k=2, to only keep the last 2 interactions in memory
-        memory=ConversationBufferWindowMemory(k=2),
-        verbose=True
-    )
-    response = conversation_with_summary.predict(input=prompt)
-    # response = openai.Completion.create(
-    #     prompt=prompt,
-    #     **COMPLETIONS_API_PARAMS
-    # )
 
-    return response
+    response = openai.Completion.create(
+        prompt=prompt,
+        **COMPLETIONS_API_PARAMS
+    )
+    return response["choices"][0]["text"].strip(" \n")
