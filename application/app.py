@@ -2,7 +2,7 @@ from flask import Flask, request, render_template
 import pickle
 import dotenv
 import os
-from common import answer_query_with_context
+from common import answer_query_with_context_llm
 
 import sys
 from pathlib import Path, PurePath
@@ -48,24 +48,25 @@ def api_answer():
          template = f.read()
 
     # loading the index and the store and the prompt template
-    answer = answer_query_with_context(question, df, document_embeddings, template, show_prompt=False)
-    result = {'answer': answer}
-    # some formatting for the frontend
-    temp = result['answer'].split('SOURCES:')
-    result['answer'] = result['answer'].replace("\\n", "<br>")
-    if temp[1] != ' None':
-        result['answer'] = temp[0]
-        logger.debug(f'Sources/Page from which the answer is derived: {str(temp[1])}')
-    else:
-        if temp[0] != "I don't know.\n":
-            result['answer'] = temp[0] + "\n" + "Source: Answer is not from this document"
-            logger.debug(f'Sources/Page from which the answer is derived: Answer is not from this document')
-        else:
-            result['answer'] = temp[0]
-
-    #result['answer'] = result['answer'].replace("SOURCES:", "")
-    logger.info(f'Answer: {result["answer"]}')
-    return result
+    answer = answer_query_with_context_llm(question, df, document_embeddings, template, show_prompt=False)
+    # result = {'answer': answer}
+    # # some formatting for the frontend
+    # temp = result['answer'].split('SOURCES:')
+    # result['answer'] = result['answer'].replace("\\n", "<br>")
+    # if temp[1] != ' None':
+    #     result['answer'] = temp[0]
+    #     logger.debug(f'Sources/Page from which the answer is derived: {str(temp[1])}')
+    # else:
+    #     if temp[0] != "I don't know.\n":
+    #         result['answer'] = temp[0] + "\n" + "Source: Answer is not from this document"
+    #         logger.debug(f'Sources/Page from which the answer is derived: Answer is not from this document')
+    #     else:
+    #         result['answer'] = temp[0]
+    #
+    # #result['answer'] = result['answer'].replace("SOURCES:", "")
+    # logger.info(f'Answer: {result["answer"]}')
+    # return result
+    return answer
 
 
 # handling CORS
