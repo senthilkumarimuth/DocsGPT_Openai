@@ -2,8 +2,8 @@ from flask import Flask, request, render_template
 import pickle
 import dotenv
 import os
-from common import answer_query_with_context_llm
-
+from common import answer_query_with_context
+from langchain.memory import ConversationBufferWindowMemory
 import sys
 from pathlib import Path, PurePath
 sys.path.append(PurePath(Path(__file__).parents[1]).as_posix())
@@ -14,13 +14,10 @@ from utils.logging.custom_logging import logger
 dotenv.load_dotenv()
 
 # load prompt template
-from langchain.memory import ConversationBufferWindowMemory
 
 memory = ConversationBufferWindowMemory(k=2)
 memory.ai_prefix = 'FINAL ANSWER'
 memory.human_prefix = 'QUESTION'
-memory.save_context({"input": "hi"}, {"ouput": "hello how are you.\nSOURCES: "})
-memory.save_context({"input": "good how are you"}, {"ouput": "i am doing great.\nSOURCES: "})
 
 logger.debug('Starting Flask APP')
 app = Flask(__name__)
@@ -55,7 +52,7 @@ def api_answer():
 
     # loading the index and the store and the prompt template
 
-    answer = answer_query_with_context_llm(question, df, document_embeddings, template, memory, show_prompt=False)
+    answer = answer_query_with_context(question, df, document_embeddings, template, memory, show_prompt=True)
     result = {'answer': answer}
     #some formatting for the frontend
     temp = result['answer'].split('SOURCES:')

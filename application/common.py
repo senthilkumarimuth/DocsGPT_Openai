@@ -8,7 +8,6 @@ from langchain.llms import OpenAI
 from langchain.chains import ConversationChain
 
 
-
 from pathlib import Path, PurePath
 sys.path.append(PurePath(Path(__file__).parents[1]).as_posix())
 from utils.logging.custom_logging import logger
@@ -95,41 +94,6 @@ def construct_prompt(question: str, context_embeddings: dict, df: pd.DataFrame, 
 
 
 def answer_query_with_context(
-        query: str,
-        df: pd.DataFrame,
-        document_embeddings: dict[(str, str), np.array],
-        template: str,
-        show_prompt: bool = False) -> str:
-    """
-        Facade function to get question from user and call model, eventually returns the answer to user
-
-        :param query: question to docsgpt
-        :param df: document in dataframe
-        :param document_embeddings: embedding vector of document
-        :param template: prompt
-        :param show_prompt: to show prompt in stdout or not? boolean
-        :return: answer from docgpt
-        """
-    prompt = construct_prompt(
-            query,
-            document_embeddings,
-            df,
-            template
-        )
-
-    if show_prompt:
-
-        print(prompt)
-
-    response = openai.Completion.create(
-        prompt=prompt,
-        **COMPLETIONS_API_PARAMS
-    )
-
-    return response["choices"][0]["text"].strip(" \n")
-
-
-def answer_query_with_context_llm(
         query: str,
         df: pd.DataFrame,
         document_embeddings: dict[(str, str), np.array],
