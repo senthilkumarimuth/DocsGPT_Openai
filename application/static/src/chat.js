@@ -4,7 +4,7 @@ if (el) {
         console.log("submitting")
         event.preventDefault()
         var message = document.getElementById("message-input").value;
-        msg_html = '<div class="bg-blue-500 text-white p-2 rounded-lg mb-2 self-end"><p class="text-sm">'
+        msg_html = '<div class="bg-red-600 text-white p-2 rounded-lg mb-2 self-end"><p class="text-sm">'
         msg_html += message
         msg_html += '</p></div>'
         document.getElementById("messages").innerHTML += msg_html;
@@ -28,7 +28,7 @@ if (el) {
             .then(data => {
                 console.log('Success:', data);
 				console.log('Success:', data.sources);
-                msg_html = '<div class="bg-indigo-500 text-white p-2 rounded-lg mb-2 self-start"><code class="text-sm">'
+                msg_html = '<div class="bg-blue-800 text-white p-2 rounded-lg mb-2 self-start"><code class="text-sm">'
                 msg_html += data.answer
                 msg_html += '</code></div>'
                 document.getElementById("messages").innerHTML += msg_html;
