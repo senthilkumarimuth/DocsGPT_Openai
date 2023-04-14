@@ -16,7 +16,7 @@ COMPLETIONS_MODEL = "text-davinci-003"
 EMBEDDING_MODEL = "text-embedding-ada-002"
 
 
-MAX_SECTION_LEN = 500
+MAX_SECTION_LEN = 1000
 SEPARATOR = "\n* "
 ENCODING = "gpt2"  # encoding for text-davinci-003
 
@@ -28,7 +28,7 @@ f"Context separator contains {separator_len} tokens"
 COMPLETIONS_API_PARAMS = {
     # We use temperature of 0.0 because it gives the most predictable, factual answer.
     "temperature": 0.0,
-    "max_tokens": 300,
+    "max_tokens": 500,
     "model": COMPLETIONS_MODEL,
 }
 
@@ -61,7 +61,9 @@ def order_document_sections_by_query_similarity(query: str, contexts: dict[(str,
     document_similarities = sorted([
         (vector_similarity(query_embedding, doc_embedding), doc_index) for doc_index, doc_embedding in contexts.items()
     ], reverse=True)
+    logger.debug(f"most relevant document sections {document_similarities}")
     return document_similarities
+
 
 def construct_prompt(question: str, context_embeddings: dict, df: pd.DataFrame, template: str, memory) -> str:
     """
@@ -78,17 +80,19 @@ def construct_prompt(question: str, context_embeddings: dict, df: pd.DataFrame, 
         document_section = df.loc[section_index]
 
         chosen_sections_len += document_section.tokens + separator_len
+        section = SEPARATOR + document_section.content.replace("\n", " ")
         if chosen_sections_len > MAX_SECTION_LEN:
             logger.warning(f'SECTION LEN EXCEED TO MAX SECTION LEN({MAX_SECTION_LEN})')
-            break
+            logger.warning(f'missed to include in prompt: {section}')
+        else:
+            logger.info(f'Context Proability is: {_}')
+            logger.debug(f'Contex: {section}')
+            chosen_sections.append(section)
+            chosen_sections_indexes.append(str(section_index))
         #chosen_sections.append(SEPARATOR + document_section.content.replace("\n", " "))
-        logger.info(f'Context Proability is: {_}')
-        section = SEPARATOR + document_section.content.replace("\n", " ")
-        logger.debug(f'Contex: {section}')
-        chosen_sections.append(section)
-        chosen_sections_indexes.append(str(section_index))
+
     #header = """You are TVS QA BOT. You are capable of answering questions reqarding TVS Owner Manual. Answer the question as truthfully as possible using the provided context, and if the answer is not contained within the text below, say "I don't know."\n\nContext:\n"""
-    _prompt = template+memory.load_memory_variables({})['history'] + "\nQUESTION: " + question +"\nContext: " + "".join(chosen_sections) + \
+    _prompt = template+ "\n" +memory.load_memory_variables({})['history'] + "\nQUESTION: " + question +"\ncontent: " + "".join(chosen_sections) + \
               "\nSource: " + ",".join(chosen_sections_indexes)+  "\nFINAL ANSWER:"
     return _prompt
 
@@ -119,7 +123,6 @@ def answer_query_with_context(
         )
 
     #prompt = prompt + "\n" + memory.load_memory_variables({})['history']
-    print(prompt)
     if show_prompt:
 
         print(prompt)
