@@ -4,7 +4,7 @@ if (el) {
         console.log("submitting")
         event.preventDefault()
         var message = document.getElementById("message-input").value;
-        msg_html = '<div class="bg-red-600 text-white p-2 rounded-lg mb-2 self-end"><p class="text-sm">'
+        msg_html = '<div class="bg-red-500 text-white p-2 rounded-lg mb-2 self-end"><p class="text-sm">'
         msg_html += message
         msg_html += '</p></div>'
         document.getElementById("messages").innerHTML += msg_html;
