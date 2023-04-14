@@ -27,11 +27,13 @@ pdfFileObj = open('TVS Jupiter 125 - SMW.pdf', 'rb')
 pdfReader = PyPDF2.PdfReader(pdfFileObj)
 num_pages = len(pdfReader.pages)
 data = []
+logger.debug("wait while pages are being rewritten by completion API to remove noises")
 for page in range(0, num_pages):
     pageObj = pdfReader.pages[page]
     page_text = pageObj.extract_text()
     data.append(page_text)
 pdfFileObj.close()
+data_rewrite = [rewrite(doc) for doc in data]
 logger.info(f'Number of pages in the document is: {len(data)}')
 
 # Split small chucks to so that LLMs can perform well
@@ -39,15 +41,12 @@ text_splitter = CharacterTextSplitter(chunk_size=1500, separator="\n")
 docs = []
 metadatas = []
 sources = None
-for i, d in enumerate(data):
+for i, d in enumerate(data_rewrite):
     splits = text_splitter.split_text(d)
     docs.extend(splits)
     metadatas.extend([{"source": i}] * len(splits))
 
 df = pd.DataFrame(metadatas)
-logger.debug("wait while docs are being rewritten by completion API to move noises")
-df.insert(1, 'noise_content', docs)
-docs = [rewrite(doc) for doc in docs]
 df.insert(1, 'content', docs)
 df.insert(1,'raw_index', df.index)
 df = df.set_index(['raw_index',"source"])
