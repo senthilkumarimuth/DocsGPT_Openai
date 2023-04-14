@@ -5,12 +5,13 @@ import openai
 import dotenv,os
 from transformers import GPT2TokenizerFast
 import pickle
-from pathlib import Path, PurePath
 import time
+from rewrite_pages import rewrite
 
 import sys
 from pathlib import Path, PurePath
 sys.path.append(PurePath(Path(__file__).parents[1]).as_posix())
+print(sys.path)
 from utils.logging.custom_logging import logger
 
 # set api key
@@ -44,6 +45,9 @@ for i, d in enumerate(data):
     metadatas.extend([{"source": i}] * len(splits))
 
 df = pd.DataFrame(metadatas)
+logger.debug("wait while docs are being rewritten by completion API to move noises")
+df.insert(1, 'noise_content', docs)
+docs = [rewrite(doc) for doc in docs]
 df.insert(1, 'content', docs)
 df.insert(1,'raw_index', df.index)
 df = df.set_index(['raw_index',"source"])
@@ -65,12 +69,14 @@ df.insert(1, 'tokens', content_token)
 
 EMBEDDING_MODEL = "text-embedding-ada-002"
 
+
 def get_embedding(text: str, model: str = EMBEDDING_MODEL) -> list[float]:
     result = openai.Embedding.create(
         model=model,
-        input=text
+        input= text
     )
     return result["data"][0]["embedding"]
+
 
 def compute_doc_embeddings(df: pd.DataFrame) -> dict[tuple[str, str], list[float]]:
     """
@@ -93,21 +99,18 @@ def compute_doc_embeddings(df: pd.DataFrame) -> dict[tuple[str, str], list[float
     logger.info(f'Embedding process is completed')
     return embed_dict
 
+
 # compute embedding for the document
 document_embeddings = compute_doc_embeddings(df)
 
 # Save as pkl file
-
 root_path = PurePath(Path(__file__).parents[1]).as_posix()
 vector_path = os.path.join(root_path, 'application', 'vectorstores', 'tvs', f'{document_name}')
 os.makedirs(vector_path, exist_ok=True)
 # write docs.index and pkl file
-
 df.to_pickle(os.path.join(vector_path,'df.pkl'))
 df.to_csv(os.path.join(vector_path,'df.csv'))
-
-
 with open(os.path.join(vector_path,"document_embeddings.pkl"), "wb") as f:
      pickle.dump(document_embeddings, f)
-
+# end
 logger.info('Vectorization is successful')
