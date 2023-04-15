@@ -92,8 +92,8 @@ def construct_prompt(question: str, context_embeddings: dict, df: pd.DataFrame, 
         #chosen_sections.append(SEPARATOR + document_section.content.replace("\n", " "))
 
     #header = """You are TVS QA BOT. You are capable of answering questions reqarding TVS Owner Manual. Answer the question as truthfully as possible using the provided context, and if the answer is not contained within the text below, say "I don't know."\n\nContext:\n"""
-    _prompt = template+ "\n" +memory.load_memory_variables({})['history'] + "\nQUESTION: " + question +"\ncontent: " + "".join(chosen_sections) + \
-              "\nSource: " + ",".join(chosen_sections_indexes)+  "\nFINAL ANSWER:"
+    _prompt = template+ "\n" +memory.load_memory_variables({})['history'] + "\nQUESTION: " + \
+              question +"\ncontent: " + "".join(chosen_sections) + "\nFINAL ANSWER:"
     return _prompt
 
 
