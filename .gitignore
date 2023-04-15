@@ -133,6 +133,6 @@ dmypy.json
 # macOS
 .DS_Store
 
-application/vectorstores/
+application/vectorstores/backup
 scripts/seaborn/
 application/backup/
