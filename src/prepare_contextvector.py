@@ -110,4 +110,5 @@ df.to_csv(os.path.join(vector_path,'df.csv'))
 with open(os.path.join(vector_path,"document_embeddings.pkl"), "wb") as f:
      pickle.dump(document_embeddings, f)
 # end
+# Todo: Update path in HTML so that new document can be recognized by UI
 logger.info('Vectorization is successful')
