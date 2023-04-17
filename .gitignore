@@ -101,7 +101,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+src/.env
 .venv
 env/
 venv/
@@ -133,6 +133,6 @@ dmypy.json
 # macOS
 .DS_Store
 
-application/vectorstores/backup
+src/vectorstores/backup
 scripts/seaborn/
 application/backup/

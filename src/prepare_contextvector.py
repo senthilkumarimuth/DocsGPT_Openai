@@ -6,12 +6,10 @@ import dotenv,os
 from transformers import GPT2TokenizerFast
 import pickle
 import time
-from rewrite_pages import rewrite
-
+from src.utils.rewrite_pages import rewrite
 import sys
 from pathlib import Path, PurePath
 sys.path.append(PurePath(Path(__file__).parents[1]).as_posix())
-print(sys.path)
 from utils.logging.custom_logging import logger
 
 # set api key
@@ -23,7 +21,7 @@ document_name = str(input('Enter PDF document name for which vector to be create
 
 # pdf to text
 
-pdfFileObj = open('TVS Jupiter 125 - SMW.pdf', 'rb')
+pdfFileObj = open('../data/TVS Jupiter 125 - SMW.pdf', 'rb')
 pdfReader = PyPDF2.PdfReader(pdfFileObj)
 num_pages = len(pdfReader.pages)
 data = []
@@ -104,7 +102,7 @@ document_embeddings = compute_doc_embeddings(df)
 
 # Save as pkl file
 root_path = PurePath(Path(__file__).parents[1]).as_posix()
-vector_path = os.path.join(root_path, 'application', 'vectorstores', 'tvs', f'{document_name}')
+vector_path = os.path.join(root_path, 'vectorstores', f'{document_name}')
 os.makedirs(vector_path, exist_ok=True)
 # write docs.index and pkl file
 df.to_pickle(os.path.join(vector_path,'df.pkl'))

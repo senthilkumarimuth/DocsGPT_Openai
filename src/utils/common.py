@@ -4,13 +4,9 @@ import tiktoken
 import pandas as pd
 import sys
 
-from langchain.llms import OpenAI
-from langchain.chains import ConversationChain
-
-
 from pathlib import Path, PurePath
 sys.path.append(PurePath(Path(__file__).parents[1]).as_posix())
-from utils.logging.custom_logging import logger
+from src.utils.logging.custom_logging import logger
 
 COMPLETIONS_MODEL = "text-davinci-003"
 EMBEDDING_MODEL = "text-embedding-ada-002"

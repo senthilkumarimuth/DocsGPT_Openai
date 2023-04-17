@@ -2,7 +2,7 @@ from flask import Flask, request, render_template
 import pickle
 import dotenv
 import os
-from common import answer_query_with_context
+from src.utils.common import answer_query_with_context
 from langchain.memory import ConversationBufferWindowMemory
 import sys
 from pathlib import Path, PurePath
@@ -45,7 +45,7 @@ def api_answer():
     with open(os.path.join(vector_store,"document_embeddings.pkl"), "rb") as f:
         document_embeddings = pickle.load(f)
     # loading prompt
-    prompt_path = os.path.join("prompts",data["active_docs"])
+    prompt_path = os.path.join("./prompts", data["active_docs"])
     logger.debug(f'prompt path: {prompt_path}')
     with open(os.path.join(prompt_path,"combine_prompt.txt"), "r") as f:
          template = f.read()
