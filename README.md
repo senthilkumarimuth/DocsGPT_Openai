@@ -21,7 +21,7 @@ Install dependencies. cd to application folder and run the below command
 
 `pip install -r requirements.text`
  
-Go to scripts folder and run the script prepare_contextvector.py
+Go to src folder and run the script prepare_contextvector.py
 
 `python prepare_contextvector.py`
 
